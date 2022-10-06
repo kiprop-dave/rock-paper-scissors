@@ -51,9 +51,19 @@ const GameScore = styled.h1`
     }
 `
 
-function Header({ score }) {
+function Header({ results }) {
 
-    const formatScore = score < 10 ? `0${0}` : score;
+    const { score } = results;
+
+    const formatScore = () => {
+        if (score < 0) {
+            return score
+        } else if (score < 10) {
+            return `0${score}`;
+        } else {
+            return score;
+        }
+    }
 
     return (
         <>
@@ -61,7 +71,7 @@ function Header({ score }) {
                 <Logo src='/logo.svg' alt='game logo' />
                 <Score>
                     <ScoreTitle>SCORE</ScoreTitle>
-                    <GameScore>{formatScore}</GameScore>
+                    <GameScore>{formatScore()}</GameScore>
                 </Score>
             </Container>
         </>

@@ -4,6 +4,7 @@ import RulesNodal from './components/rulesNodal';
 import Header from './components/header';
 import GameChoices from './components/gameChoices';
 import Results from './components/results';
+import useSyncState from './hooks/useSyncState';
 import { radialGradient, scissorsGradient, paperGradient, rockGradient } from './utils/colours';
 
 const Page = styled.div`
@@ -42,16 +43,35 @@ const RulesButton = styled.button`
 
   @media screen and (max-width: 600px){
     right: 38%;
+    bottom: 5rem;
   }
 `
 
 function App() {
   const [showRules, setShowRules] = useState(true);
-  const [score, setScore] = useState(0);
   const [hasPlayed, setHasPlayed] = useState(false);
   const [playerChoice, setPlayerChoice] = useState({});
   const [houseChoice, setHouseChoice] = useState({});
-  const [userWins, setUserWins] = useState(false);
+  const SyncHouseChoice = useSyncState({});
+  // const [results, setResults] = useState({
+  //   score: JSON.parse(localStorage.getItem('score')) || 0,
+  //   win: false,
+  //   draw: false
+  // });
+
+  const getLocalStorage = () => {
+    return {
+      score: JSON.parse(localStorage.getItem('score')) || 0,
+      win: false,
+      draw: false
+    }
+  }
+  const [results, setResults] = useState(() => getLocalStorage())
+
+  useEffect(() => {
+    localStorage.setItem('score', JSON.stringify(results.score));
+  }, [results])
+
 
   const gameOptions = [
     {
@@ -65,22 +85,17 @@ function App() {
       background: paperGradient
     },
     {
-      name: 'scissor',
+      name: 'scissors',
       icon: '/icon-scissors.svg',
       background: scissorsGradient
     }
   ]
 
-  // useEffect(() => {
-  //   console.log('player choice', playerChoice)
-  //   console.log('house choice', houseChoice);
-  // }, [playerChoice])
-
-
   function housePlays() {
-    let randomNumber = Math.ceil(Math.random() * 3);
+    let randomNumber = Math.ceil(Math.random() * 2);
     const choice = gameOptions[randomNumber];
-    setHouseChoice(choice);
+    const newChoice = SyncHouseChoice.setState(choice);
+    return newChoice;
   }
 
 
@@ -89,16 +104,51 @@ function App() {
 
 
   function userPlays(choice) {
-    // setTimeout(housePlays, 1000)
     setHasPlayed(true);
+    const currentHousePick = housePlays();
+    const { name: userChoice } = choice;
+    const { name: browserChoice } = currentHousePick;
+
+    const userWins = userChoice === 'paper' && browserChoice === 'rock' || userChoice === 'rock' && browserChoice === 'scissors' ||
+      userChoice === 'scissors' && browserChoice === 'paper' // check if the user has won 
+
+    const draw = userChoice === browserChoice;
+
+    if (draw) {
+      setResults(prev => ({
+        ...prev,
+        draw: true
+      }))
+    }
+
+    if (userWins) {
+      setResults(prev => ({
+        ...prev,
+        score: prev.score + 1,
+        win: true
+      }))
+    }
+
+    if (!userWins && !draw) {
+      setResults(prev => ({
+        ...prev,
+        score: prev.score - 1
+      }))
+    }
+
     setPlayerChoice(choice);
-    housePlays();
+    setHouseChoice(currentHousePick);
   }
 
   function playAgain() {
     setHasPlayed(false);
     setPlayerChoice({});
     setHouseChoice({});
+    setResults(prev => ({
+      ...prev,
+      win: false,
+      draw: false
+    }))
   }
 
 
@@ -106,11 +156,11 @@ function App() {
     <>
       <Page>
         <Container>
-          <Header score={score} />
+          <Header results={results} />
           {
             !hasPlayed ?
               <GameChoices gameOptions={gameOptions} play={userPlays} /> :
-              <Results playerChoice={playerChoice} houseChoice={houseChoice} playAgain={playAgain} />
+              <Results playerChoice={playerChoice} houseChoice={houseChoice} playAgain={playAgain} results={results} />
           }
           {/* <GameChoices gameOptions={gameOptions} play={userPlays} /> */}
         </Container>

@@ -22,19 +22,19 @@ This is my solution to the [Rock, Paper, Scissors challenge on Frontend Mentor](
 
 Users should be able to:
 
-- View the optimal layout for the game depending on their device's screen size
-- Play Rock, Paper, Scissors against the computer
-- Maintain the state of the score after refreshing the browser _(optional)_
+- View the optimal layout for the game depending on their device's screen size ✅
+- Play Rock, Paper, Scissors against the computer ✅
+- Maintain the state of the score after refreshing the browser _(optional)_ ✅
 - **Bonus**: Play Rock, Paper, Scissors, Lizard, Spock against the computer _(optional)_
 
 ### Screenshot
 
-![](./screenshot.jpg)
+![](/public/rock-paper-scissors.png)
 
 ### Links
 
 - Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- Live Site URL: [here](http://rock-paper-scissors-gamma-gules.vercel.app/)
 
 ## My process
 
@@ -48,7 +48,33 @@ Users should be able to:
 
 ### What I learned
 
+Trying to get the latest values in state after an update was tricky to get around. However, I found an insightful blog that helped me navigate this issue. Using a custom React hook worked.
+
+```js
+import { useState } from "react";
+
+function useSyncState(someState) {
+  const [syncState, setSyncState] = useState(someState);
+
+  let currentState = syncState;
+
+  const getCurrent = () => currentState;
+
+  const setState = (newValue) => {
+    currentState = newValue;
+    setSyncState(newValue);
+    return currentState;
+  };
+
+  return { getCurrent, setState };
+}
+
+export default useSyncState;
+```
+
 ### Continued development
+
+I haven't done the last bonus feature. I plan on adding it in the future.
 
 ### Useful resources
 
@@ -61,3 +87,5 @@ Users should be able to:
 - Frontend Mentor - [@kiprop-dave](https://www.frontendmentor.io/profile/kiprop-dave)
 
 ## Acknowledgments
+
+I had some trouble trying to make state updates synchronous. This [blog](https://dev.to/bytebodger/synchronous-state-with-react-hooks-1k4f) helped me to do exactly that.

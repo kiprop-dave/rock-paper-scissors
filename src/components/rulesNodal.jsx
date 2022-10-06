@@ -12,9 +12,11 @@ const Page = styled.div`
     align-items: center;
     justify-content: center;
     background: rgba(36, 35, 35, 0.4) ;
+    text-align: center;
 
     @media screen and (max-width: 600px){
         background: #f2e9e9;
+        
     }
 `
 const Container = styled.div`
@@ -29,7 +31,7 @@ const Container = styled.div`
 
     @media screen and (max-width: 600px){
         width: 90%;
-        height: 65%;
+        height: 50%;
         align-items: center;
     }
 `
@@ -40,6 +42,13 @@ const Header = styled.div`
 `
 const Title = styled.h1`
     color: ${radialGradient.from};
+
+    @media screen and (max-width: 600px){
+        position: fixed;
+        top: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 `
 const CloseIcon = styled.img`
     width: 1.5rem;
@@ -48,13 +57,19 @@ const CloseIcon = styled.img`
 
     @media screen and (max-width: 600px){
         position: fixed;
-        bottom: 4rem;
-        right: 48%;
+        bottom: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
     }
 `
 const RulesImage = styled.img`
     width: 100%;
     height: 85%;
+
+    @media screen and (max-width: 600px){
+        height: 75%;
+        margin-bottom: 3rem;
+    }
 `
 
 function RulesNodal({ closeNodal }) {
@@ -67,7 +82,7 @@ function RulesNodal({ closeNodal }) {
                         <Title>RULES</Title>
                         <CloseIcon src='/icon-close.svg' alt='close nodal' onClick={() => closeNodal()} />
                     </Header>
-                    <RulesImage src='image-rules.svg' alt='game rules' />
+                    <RulesImage src='/image-rules.svg' alt='game rules' />
                 </Container>
             </Page>
         </>
